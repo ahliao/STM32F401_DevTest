@@ -15,7 +15,7 @@ startup/%.o: ../startup/%.s
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU GCC Assembler'
 	@echo $(PWD)
-	arm-none-eabi-as -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -I"E:/STM32_Workbenches/STM32F401RE_FreeRTOS/HAL_Driver/Inc/Legacy" -I"E:/STM32_Workbenches/STM32F401RE_FreeRTOS/inc" -I"E:/STM32_Workbenches/STM32F401RE_FreeRTOS/CMSIS/device" -I"E:/STM32_Workbenches/STM32F401RE_FreeRTOS/CMSIS/core" -I"E:/STM32_Workbenches/STM32F401RE_FreeRTOS/HAL_Driver/Inc" -g -o "$@" "$<"
+	arm-none-eabi-as -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -I"E:/STM32_Workbenches/STM32F401RE_FreeRTOS_SD/HAL_Driver/Inc/Legacy" -I"E:/STM32_Workbenches/STM32F401RE_FreeRTOS_SD/inc" -I"E:/STM32_Workbenches/STM32F401RE_FreeRTOS_SD/CMSIS/device" -I"E:/STM32_Workbenches/STM32F401RE_FreeRTOS_SD/CMSIS/core" -I"E:/STM32_Workbenches/STM32F401RE_FreeRTOS_SD/HAL_Driver/Inc" -g -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

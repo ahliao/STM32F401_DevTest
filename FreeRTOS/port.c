@@ -30,6 +30,7 @@
  *----------------------------------------------------------*/
 
 /* Scheduler includes. */
+#include "stm32f4xx_hal.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -487,17 +488,20 @@ void xPortPendSVHandler( void )
 
 void xPortSysTickHandler( void )
 {
-	/* The SysTick runs at the lowest interrupt priority, so when this interrupt
-	executes all interrupts must be unmasked.  There is therefore no need to
-	save and then restore the interrupt mask value as its value is already
-	known. */
+	//The SysTick runs at the lowest interrupt priority, so when this interrupt
+	//executes all interrupts must be unmasked.  There is therefore no need to
+	//save and then restore the interrupt mask value as its value is already
+	//known.
 	portDISABLE_INTERRUPTS();
 	{
-		/* Increment the RTOS tick. */
+		HAL_IncTick();
+		//HAL_SYSTICK_IRQHandler();
+
+		// Increment the RTOS tick.
 		if( xTaskIncrementTick() != pdFALSE )
 		{
-			/* A context switch is required.  Context switching is performed in
-			the PendSV interrupt.  Pend the PendSV interrupt. */
+			//A context switch is required.  Context switching is performed in
+			//the PendSV interrupt.  Pend the PendSV interrupt.
 			portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT;
 		}
 	}

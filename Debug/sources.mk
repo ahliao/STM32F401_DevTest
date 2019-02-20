@@ -18,6 +18,10 @@ SUBDIRS := \
 FreeRTOS \
 HAL_Driver/Src/Legacy \
 HAL_Driver/Src \
+Middlewares/Third_Party/FatFs/src \
+Middlewares/Third_Party/FatFs/src/option \
+NHD-24-240320_Driver \
+inc \
 src \
 startup \
 

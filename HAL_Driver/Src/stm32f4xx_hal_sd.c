@@ -370,7 +370,7 @@ HAL_StatusTypeDef HAL_SD_InitCard(SD_HandleTypeDef *hsd)
   SDIO_Init(hsd->Instance, Init);
 
   /* Disable SDIO Clock */
-  __HAL_SD_DISABLE(hsd); 
+  __HAL_SD_DISABLE(hsd);
   
   /* Set Power State to ON */
   SDIO_PowerState_ON(hsd->Instance);
@@ -2535,20 +2535,20 @@ static uint32_t SD_PowerON(SD_HandleTypeDef *hsd)
   __IO uint32_t count = 0U;
   uint32_t response = 0U, validvoltage = 0U;
   uint32_t errorstate = HAL_SD_ERROR_NONE;
-  
+
   /* CMD0: GO_IDLE_STATE */
   errorstate = SDMMC_CmdGoIdleState(hsd->Instance);
   if(errorstate != HAL_SD_ERROR_NONE)
   {
     return errorstate;
   }
-  
+
   /* CMD8: SEND_IF_COND: Command available only on V2.0 cards */
   errorstate = SDMMC_CmdOperCond(hsd->Instance);
   if(errorstate != HAL_SD_ERROR_NONE)
   {
     hsd->SdCard.CardVersion = CARD_V1_X;
-      
+
     /* Send ACMD41 SD_APP_OP_COND with Argument 0x80100000 */
     while(validvoltage == 0U)
     {
@@ -2556,7 +2556,7 @@ static uint32_t SD_PowerON(SD_HandleTypeDef *hsd)
       {
         return HAL_SD_ERROR_INVALID_VOLTRANGE;
       }
-      
+
       /* SEND CMD55 APP_CMD with RCA as 0 */
       errorstate = SDMMC_CmdAppCommand(hsd->Instance, 0U);
       if(errorstate != HAL_SD_ERROR_NONE)
@@ -2570,7 +2570,7 @@ static uint32_t SD_PowerON(SD_HandleTypeDef *hsd)
       {
         return HAL_SD_ERROR_UNSUPPORTED_FEATURE;
       }
-      
+
       /* Get command response */
       response = SDIO_GetResponse(hsd->Instance, SDIO_RESP1);
       
@@ -2583,7 +2583,7 @@ static uint32_t SD_PowerON(SD_HandleTypeDef *hsd)
   else
   {
     hsd->SdCard.CardVersion = CARD_V2_X;
-        
+
     /* Send ACMD41 SD_APP_OP_COND with Argument 0x80100000 */
     while(validvoltage == 0U)
     {
@@ -2591,21 +2591,21 @@ static uint32_t SD_PowerON(SD_HandleTypeDef *hsd)
       {
         return HAL_SD_ERROR_INVALID_VOLTRANGE;
       }
-      
+
       /* SEND CMD55 APP_CMD with RCA as 0 */
       errorstate = SDMMC_CmdAppCommand(hsd->Instance, 0U);
       if(errorstate != HAL_SD_ERROR_NONE)
       {
         return errorstate;
       }
-      
+
       /* Send CMD41 */
       errorstate = SDMMC_CmdAppOperCommand(hsd->Instance, SDMMC_HIGH_CAPACITY);
       if(errorstate != HAL_SD_ERROR_NONE)
       {
         return errorstate;
       }
-      
+
       /* Get command response */
       response = SDIO_GetResponse(hsd->Instance, SDIO_RESP1);
       
@@ -2784,16 +2784,16 @@ static uint32_t SD_WideBus_Enable(SD_HandleTypeDef *hsd)
   {
     return HAL_SD_ERROR_LOCK_UNLOCK_FAILED;
   }
-  
+
   /* Get SCR Register */
-  errorstate = SD_FindSCR(hsd, scr);
+  /*errorstate = SD_FindSCR(hsd, scr);
   if(errorstate != HAL_OK)
   {
     return errorstate;
-  }
-  
+  }*/
+
   /* If requested card supports wide bus operation */
-  if((scr[1U] & SDMMC_WIDE_BUS_SUPPORT) != SDMMC_ALLZERO)
+  //if((scr[1U] & SDMMC_WIDE_BUS_SUPPORT) != SDMMC_ALLZERO)
   {
     /* Send CMD55 APP_CMD with argument as card's RCA.*/
     errorstate = SDMMC_CmdAppCommand(hsd->Instance, (uint32_t)(hsd->SdCard.RelCardAdd << 16U));
@@ -2811,10 +2811,10 @@ static uint32_t SD_WideBus_Enable(SD_HandleTypeDef *hsd)
 
     return HAL_SD_ERROR_NONE;
   }
-  else
+  /*else
   {
     return HAL_SD_ERROR_REQUEST_NOT_APPLICABLE;
-  }
+  }*/
 }
 
 /**
@@ -2878,7 +2878,7 @@ static uint32_t SD_FindSCR(SD_HandleTypeDef *hsd, uint32_t *pSCR)
   uint32_t tickstart = HAL_GetTick();
   uint32_t index = 0U;
   uint32_t tempscr[2U] = {0U, 0U};
-  
+
   /* Set Block Size To 8 Bytes */
   errorstate = SDMMC_CmdBlockLength(hsd->Instance, 8U);
   if(errorstate != HAL_OK)
@@ -2907,7 +2907,7 @@ static uint32_t SD_FindSCR(SD_HandleTypeDef *hsd, uint32_t *pSCR)
   {
     return errorstate;
   }
-  
+
   while(!__HAL_SD_GET_FLAG(hsd, SDIO_FLAG_RXOVERR | SDIO_FLAG_DCRCFAIL | SDIO_FLAG_DTIMEOUT | SDIO_FLAG_DBCKEND))
   {
     if(__HAL_SD_GET_FLAG(hsd, SDIO_FLAG_RXDAVL))
@@ -2915,13 +2915,13 @@ static uint32_t SD_FindSCR(SD_HandleTypeDef *hsd, uint32_t *pSCR)
       *(tempscr + index) = SDIO_ReadFIFO(hsd->Instance);
       index++;
     }
-    
+
     if((HAL_GetTick() - tickstart) >=  SDMMC_DATATIMEOUT)
     {
       return HAL_SD_ERROR_TIMEOUT;
     }
   }
-  
+
   if(__HAL_SD_GET_FLAG(hsd, SDIO_FLAG_DTIMEOUT))
   {
     __HAL_SD_CLEAR_FLAG(hsd, SDIO_FLAG_DTIMEOUT);
